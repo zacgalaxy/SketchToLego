@@ -8,9 +8,9 @@
     "frontend": "file:",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.5",
     "react-scripts": "5.0.1",
     "react-sketch-canvas": "^6.2.0",
-    "tailwindcss": "^4.0.3",
     "web-vitals": "^4.2.4"
   },
   "scripts": {
@@ -36,5 +36,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss7-compat": "^2.2.17",
+    "postcss-cli": "^11.0.0"
   }
 }
