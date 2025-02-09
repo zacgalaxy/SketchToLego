@@ -3,8 +3,8 @@ import axios from "axios";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { ReactSketchCanvas } from "react-sketch-canvas";
 
-const API_URL = "http://127.0.0.1:8000"; // FastAPI backend URL
-
+//const API_URL = "https://0zn01bzj-8000.uks1.devtunnels.ms"; // FastAPI backend URL
+const API_URL = "http://localhost:8000";
 const Home = () => {
   const [images, setImages] = useState([]); // List of images
   const [selectedImage, setSelectedImage] = useState(null); // Current image
@@ -168,15 +168,18 @@ const Home = () => {
                         <h3>Sketch Here</h3>
                         <ReactSketchCanvas
                             ref={sketchRef}
-                            width="512px"
-                            height="512px"
+                            width="100%"
+                            height="100%"
                             strokeWidth={isEraser ? 15 : 6} // Increase stroke width for eraser
                             strokeColor={isEraser ? "white" : "black"} // White for erasing
                             className="sketch-container"
                         />
                     </div>
+                    </div>
+                
+            )}
 
-                    {/* Eraser & Save Buttons */}
+            {/* Eraser & Save Buttons */}
                     <div className="action-buttons">
                         <button onClick={() => setIsEraser(!isEraser)}>
                             {isEraser ? "Switch to Draw" : "Switch to Eraser"}
@@ -184,10 +187,7 @@ const Home = () => {
                         <button onClick={saveSketch}>Save Sketch</button>
                         <button onClick={() => sketchRef.current.clearCanvas()}>Clear Sketch</button>
                         
-                    </div>
-                </div>
-            )}
-               
+             </div>  
         </div>
     );
 
