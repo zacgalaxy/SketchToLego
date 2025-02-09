@@ -7,6 +7,7 @@ import cv2
 import numpy as np
 import re
 import shutil
+from datetime import datetime
 # apply  uvicorn main:app --reload   to run the backend
 
 app = FastAPI()
@@ -71,7 +72,11 @@ async def upload_sketch(image_name: str, file: UploadFile = File(...)):
     """Saves the sketched image in a folder with the same name as the sketch."""
     sketch_folder = SKETCH_DIR / re.sub(r"\.(jpeg|jpg|png)$", "",image_name, flags=re.IGNORECASE)
     sketch_folder.mkdir(parents=True, exist_ok=True) # Create folder if not exists
-    sketch_path = sketch_folder / image_name # Save sketch in folder with same name as image
+    
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") # gets time date for unique file name
+    file_extension = image_name.split(".")[-1]  # Get extension
+    sketch_filename = f"{image_name}_{timestamp}.{file_extension}"
+    sketch_path = sketch_folder / sketch_filename # Save sketch in folder with same name as image
     
     with open(sketch_path, "wb") as f:
         f.write(await file.read())
