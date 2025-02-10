@@ -3,14 +3,46 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware  # Import CORS Middleware
 from pathlib import Path
 from PIL import Image
+from skimage.metrics import structural_similarity as ssim
 import cv2
 import numpy as np
 import re
 import shutil
 from datetime import datetime
-# apply  uvicorn main:app --reload   to run the backend
+from openai import OpenAI
+import os
+from io import BytesIO
+from scipy.spatial.distance import cosine
+from dotenv import load_dotenv
 
+# Load environment variables from .env file
+load_dotenv()
 app = FastAPI()
+# Securely fetch OpenAI API key from environment variables
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+# Initialize OpenAI client
+client = OpenAI(api_key=OPENAI_API_KEY)
+
+
+# Helper functions
+def convert_to_grayscale(image: Image.Image) -> np.ndarray:
+    """Convert PIL image to grayscale numpy array."""
+    image = image.convert("L")  # Convert to grayscale
+    return np.array(image)
+
+def compute_ssim(image1: np.ndarray, image2: np.ndarray) -> float:
+    """Computes SSIM similarity score between two images."""
+    score, _ = ssim(image1, image2, full=True)
+    return round(score * 10, 2)  # Scale SSIM from 0-10
+
+def get_image_embedding(image_bytes: bytes):
+    """Get image embeddings using OpenAI's text-embedding model (converts images to text first)."""
+    response = client.embeddings.create(
+        input=image_bytes.decode('latin1'),  # Convert bytes to a string
+        model="text-embedding-3-small"  # ✅ Use a supported embedding model
+    )
+    return np.array(response.data[0].embedding)
+
 
 #when needing to get the names of the files in the folder Before I changed the Labels to the names of the files
 display_mapping = {}
@@ -86,8 +118,45 @@ async def get_sketchesnum():
     return {"sketches": sketches}
  
 
-#@app.post("")
-#async def imagefilter():
+@app.post("/analyze_sketch/{image_name}")
+async def analyze_sketch(image_name: str, sketch: UploadFile = File(...)):
+    """Compares a sketch to its reference image using SSIM and OpenAI embeddings."""
+
+    # Load images
+    original_image = Image.open(PHOTO_DIR/ image_name)
+    sketch_image = Image.open(BytesIO(await sketch.read()))
+
+    # Convert to grayscale for SSIM comparison
+    original_gray = convert_to_grayscale(original_image)
+    sketch_gray = convert_to_grayscale(sketch_image)
+
+    # Compute SSIM similarity score
+    ssim_score = compute_ssim(original_gray, sketch_gray)
+
+    # Convert images to bytes for OpenAI
+    original_bytes = BytesIO()
+    sketch_bytes = BytesIO()
+    original_image.save(original_bytes, format="PNG")
+    sketch_image.save(sketch_bytes, format="PNG")
+    """
+    # Compute OpenAI image embeddings
+    original_embedding = get_image_embedding(original_bytes.getvalue())
+    sketch_embedding = get_image_embedding(sketch_bytes.getvalue())
+
+    # Compute cosine similarity
+    cosine_similarity_score = round((1 - cosine(original_embedding, sketch_embedding)) * 10, 2)
+
+    # Final Hybrid Score (weighted 50% each)
+    final_score = round((ssim_score * 0.5) + (cosine_similarity_score * 0.5), 2)
+    """
+    return {
+        "similarity_score_ssim": ssim_score,
+        #"similarity_score_openai": cosine_similarity_score,
+        "final_hybrid_score": ssim_score,
+        "message": "Analysis complete"
+    }
+
+    
      
 
 @app.post("/upload_sketch/{image_name}")

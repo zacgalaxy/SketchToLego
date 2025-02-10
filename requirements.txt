@@ -7,4 +7,16 @@ albumentations
 transformers==4.30.0
 matlabplotlib
 numpy<2.0
-fastapi uvicorn pillow python-multipart
+fastapi 
+uvicorn  
+python-multipart
+fastapi-cors
+react 
+opencv-python
+openai
+openai 
+numpy 
+pillow 
+scipy
+opencv-python 
+scikit-image

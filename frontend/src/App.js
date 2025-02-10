@@ -70,6 +70,28 @@ const Home = () => {
 
 
 
+  //analize sketch
+  const analyisesketch= async(sketch) => {
+    if (!selectedImage) return null;
+    try {
+      console.log("Checking sketch score for:", selectedfile);
+
+      // Convert sketch data to File
+      const formData = new FormData();
+      formData.append("sketch", dataURLtoFile(sketch, "sketch.png"));
+
+      // Call FastAPI for sketch similarity
+      const response = await axios.post(`${API_URL}/analyze_sketch/${selectedfile}`, formData);
+      alert(String(response));
+      return response.data.final_hybrid_score; // Get similarity score
+    } catch (error) {
+      console.error("Error fetching sketch score:", error);
+      return null;
+    }
+      };
+
+
+
   // Save the sketch
   const saveSketch = async () => {
     if (!sketchRef.current || !selectedImage || !selectedfile ) return;
@@ -81,9 +103,20 @@ const Home = () => {
     // Convert base64 to image and merge with white background
     const finalImage = await whitebackgroundAndResize(sketchData);
 
+    
+    //get sim score
+    const sketchScore= await analyisesketch(finalImage);
+    if (sketchScore===null){
+      alert ('error in analysing sketch please try again');
+    }
 
+    //Compaore sim score 
+    if (sketchScore<5){
+      alert('Sketch score of '+String(sketchScore)+' does not match well enough try again');
+      sketchRef.current.clearCanvas();
+      return;
+    }
     const imageName = selectedfile; // ✅ Use actual filename
-
     // Convert base64 data to File object
     const formData = new FormData();
     formData.append("file", dataURLtoFile(finalImage, imageName));
@@ -95,6 +128,7 @@ const Home = () => {
     }catch (error) {
       console.error("Error saving sketch:", error);
   }
+  sketchRef.current.clearCanvas();
   };
 
   // Convert base64 to File
