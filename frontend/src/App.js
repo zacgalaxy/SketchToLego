@@ -7,7 +7,8 @@ import { ReactSketchCanvas } from "react-sketch-canvas";
 const API_URL = "http://localhost:8000";
 const Home = () => {
   const [images, setImages] = useState([]); // List of images
-  const [selectedImage, setSelectedImage] = useState(null); // Current image
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedfile, setFilename] = useState(null); // Current image
   const [imageSrc, setImageSrc] = useState(""); // Image URL for viewing
   const sketchRef = useRef(null); // Reference to sketchpad
   const [isEraser, setIsEraser] = useState(false); // Eraser mode
@@ -17,7 +18,7 @@ const Home = () => {
   // Fetch list of images from FastAPI
   useEffect(() => {
     axios.get(`${API_URL}/images`).then((response) => {
-      setImages(response.data.images);
+      setImages(response.data);
     });
   }, []);
 
@@ -33,9 +34,10 @@ const Home = () => {
 
 
   // Load selected image
-  const loadImage = (imageName) => {
-    setSelectedImage(imageName);
-    setImageSrc(`${API_URL}/image/${imageName}`);
+  const loadImage = (filename, displayname) => {
+    setSelectedImage(displayname);
+    setFilename(filename)
+    setImageSrc(`${API_URL}/image/${filename}`);
 
     if (sketchRef.current) {
       sketchRef.current.clearCanvas();
@@ -70,7 +72,7 @@ const Home = () => {
 
   // Save the sketch
   const saveSketch = async () => {
-    if (!sketchRef.current || !selectedImage) return;
+    if (!sketchRef.current || !selectedImage || !selectedfile ) return;
 
     try{
     // Convert sketch to PNG format
@@ -79,7 +81,8 @@ const Home = () => {
     // Convert base64 to image and merge with white background
     const finalImage = await whitebackgroundAndResize(sketchData);
 
-    const imageName = selectedImage; // Save with same name as the image
+
+    const imageName = selectedfile; // ✅ Use actual filename
 
     // Convert base64 data to File object
     const formData = new FormData();
@@ -138,15 +141,15 @@ const Home = () => {
             {/* Button Grid (10x5) */}
             <div className="button-grid">
                 {images.slice(0, 50).map((img, index) => {
-                  const imageName = img.replace(/\.(jpeg|jpg|png)$/i, ""); // Remove file extension
+                  const { filename, display_name } = img; // ✅ Extract filename & display name
 
                   // Find matching sketch count
-                  const matchingSketch = sketches.find(sketch => sketch.folder === imageName);
-                  const sketchCount = matchingSketch ? matchingSketch.num_files : 0; // Default to 0 if not found
+                  const matchingSketch = sketches.find(sketch => sketch.folder === filename.replace(/\.(jpeg|jpg|png)$/i, ""));
+                  const sketchCount = matchingSketch ? matchingSketch.num_files : 0;
 
                   return (
-                    <button key={index} onClick={ () => sketchCount<5 ?  loadImage(img): null } disabled= {sketchCount>= 5}>
-                      {imageName} ({sketchCount}) {/* Show image name and sketch count */}
+                    <button key={index} onClick={() => sketchCount < 5 ? loadImage(filename, display_name) : null} disabled={sketchCount >= 5}>
+                      {display_name} ({sketchCount}) {/* ✅ Uses display name */}
                     </button>
                   );
                 })}
@@ -159,6 +162,7 @@ const Home = () => {
                 <div className="image-sketch-container">
                     {/* Image on Left */}
                     <div className="image-box">
+
                         <h3>{selectedImage.replace(/\.(jpeg|jpg|png)$/i, "")}</h3>
                         <img src={imageSrc} alt="Selected" />
                     </div>

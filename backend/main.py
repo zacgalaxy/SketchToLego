@@ -1,5 +1,5 @@
 from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware  # Import CORS Middleware
 from pathlib import Path
 from PIL import Image
@@ -11,6 +11,22 @@ from datetime import datetime
 # apply  uvicorn main:app --reload   to run the backend
 
 app = FastAPI()
+
+#when needing to get the names of the files in the folder Before I changed the Labels to the names of the files
+display_mapping = {}
+save_mapping = {}
+lego_txt_path = "lego.txt"
+if Path(lego_txt_path).exists():
+    with open(lego_txt_path, "r", encoding="utf-8") as file:
+        for line in file:
+            line = line.strip()
+            if ":" in line:
+                original, new_name = line.split(":", 1)
+                display_mapping[new_name.strip()] = original.strip()
+                save_mapping[original.strip()] = new_name.strip()
+            elif line:
+                display_mapping[line.strip()] = line.strip()
+                save_mapping[line.strip()] = line.strip()
 
 # Allow React frontend to access FastAPI
 app.add_middleware(
@@ -28,10 +44,14 @@ PHOTO_DIR.mkdir(parents=True, exist_ok=True)
 SKETCH_DIR.mkdir(parents=True, exist_ok=True)
 
 @app.get("/images")
-async def get_images():
-    """Returns a list of available images."""
-    files = [f.name for f in PHOTO_DIR.glob("*.jpg")]
-    return {"images": files}
+def list_images():
+    """Returns a list of images with display names."""
+    images = []
+    for file in PHOTO_DIR.iterdir():
+        if file.is_file():
+            display_name = display_mapping.get(file.stem, file.stem)
+            images.append({"filename": file.name, "display_name": display_name})
+    return JSONResponse(content=images)
 
 @app.get("/image/{image_name}")
 async def get_image(image_name: str):
@@ -39,7 +59,7 @@ async def get_image(image_name: str):
     image_path = PHOTO_DIR / image_name
     if not image_path.exists():
         return {"error": "Image not found"}
-    
+
     # Open and convert to NumPy for OpenCV
     img = Image.open(image_path)
     img = np.array(img)  # Convert PIL to NumPy
@@ -66,6 +86,9 @@ async def get_sketchesnum():
     return {"sketches": sketches}
  
 
+#@app.post("")
+#async def imagefilter():
+     
 
 @app.post("/upload_sketch/{image_name}")
 async def upload_sketch(image_name: str, file: UploadFile = File(...)):
@@ -87,4 +110,5 @@ async def upload_sketch(image_name: str, file: UploadFile = File(...)):
 @app.get("/")
 async def root():
     return {"message": "FastAPI Backend is Running!"}
+
 

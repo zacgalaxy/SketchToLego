@@ -1,0 +1,47 @@
+Apple Tree House : House-1
+Beach House : House-2
+Blue Roadster : Car-1
+Botanical Accessories : Tree
+Botanical Garden : Conservatory
+Cargo Heli : Helicopter-1
+Corner Deli : Deli
+Crocodile 
+Cute Pug : Pug
+Dune Buggy : Buggy
+Ferris Wheel : Ferris_Wheel
+Flowers and Watering Can : Flowers
+Forklift with Pallet : Forklift
+Friendship Flowers : Flowers-2
+Cat : Cat 
+German Shepherd : Dog 
+Helicopter : Helicopter-2
+High Speed Train : Train
+Highway Cruiser : MotorBike
+House : House-3
+Jeep Wrangler : Car-2
+Lamborghini Huracán Tecnica: Car-3
+Land Rover Classic Defender: Car-4
+Lion
+London
+Mini Plane : Plane
+Motorcycle : Motorcycle
+New York City : New_York_City
+Ocean Explorer : Ship
+Orangutan
+Panda
+Parrot
+Penguin
+Pirate Ship : Pirate_Ship
+Racing Car : Race_Car
+San Francisco : San_Francisco
+Shuttle Transporter : Space_Ship
+Singapore
+Skull
+Small Cottage : Cottage
+Space Shuttle Explorer : Space_Ship2
+Sunshine Surfer Van : Van
+Vespa
+Viking Ship and the Midgard Serpent : Viking_Ship
+Vintage Car : Vinatage_Car
+White Rabbit : Rabbit
+Yellow Taxi : Taxi
