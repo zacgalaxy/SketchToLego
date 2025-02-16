@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 # Define paths (Modify if needed)
-photos_dir = Path("Lego_256x256/photos")  # Path to the folder with images
+photos_dir = Path("Lego_512x512/photos")  # Path to the folder with images
 lego_txt_path = "lego.txt"  # Path to your label text file
 
 # Ensure the directory exists

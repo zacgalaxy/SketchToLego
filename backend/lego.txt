@@ -12,7 +12,7 @@ Ferris Wheel : Ferris_Wheel
 Flowers and Watering Can : Flowers
 Forklift with Pallet : Forklift
 Friendship Flowers : Flowers-2
-Cat : Cat 
+Furry Creatures : Cat 
 German Shepherd : Dog 
 Helicopter : Helicopter-2
 High Speed Train : Train
@@ -22,7 +22,7 @@ Jeep Wrangler : Car-2
 Lamborghini Huracán Tecnica: Car-3
 Land Rover Classic Defender: Car-4
 Lion
-London
+London : Bridge
 Mini Plane : Plane
 Motorcycle : Motorcycle
 New York City : New_York_City
@@ -33,7 +33,7 @@ Parrot
 Penguin
 Pirate Ship : Pirate_Ship
 Racing Car : Race_Car
-San Francisco : San_Francisco
+San Francisco : Bridge-2
 Shuttle Transporter : Space_Ship
 Singapore
 Skull
