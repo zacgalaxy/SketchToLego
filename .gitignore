@@ -2,11 +2,12 @@
 .venv
 .venv/
 **/.env
+remove-token.txt
 
 #Ingnore Anything with the name lego 25x256 or 512x512 
 **/Lego_512x512/
 **/Lego_256x256/
-
+.
 # Ignore backend model folders
 backend/3.1MultipleSketchaccum10epoch18/
 backend/3MultipleSketchaccum10epoch15/
@@ -25,4 +26,6 @@ backend/**/photos/
 #ignore Trainer image folders
 Trainer/ClipassoDocker/Clipasso
 Trainer/Lego_datasetcreator/Lego_256x256renamed
+
+
 
