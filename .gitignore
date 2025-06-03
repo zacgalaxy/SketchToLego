@@ -1,1 +1,28 @@
+#Ingnore Venv files
 .venv
+.venv/
+**/.env
+
+#Ingnore Anything with the name lego 25x256 or 512x512 
+**/Lego_512x512/
+**/Lego_256x256/
+
+# Ignore backend model folders
+backend/3.1MultipleSketchaccum10epoch18/
+backend/3MultipleSketchaccum10epoch15/
+backend/sketchs20strokes/
+backend/generations/
+backend/MultipleSketchaccum10epoch25
+backend/static/
+backend/photos/
+backend/stable-diffusion-v1-5
+backend/models-checkpoints
+
+# Ignore all 'outimages/' folders anywhere inside 'backend/'
+backend/**/output_images/
+backend/**/photos/
+
+#ignore Trainer image folders
+Trainer/ClipassoDocker/Clipasso
+Trainer/Lego_datasetcreator/Lego_256x256renamed
+
