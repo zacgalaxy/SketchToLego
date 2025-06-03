@@ -11,7 +11,6 @@ from transformers import CLIPProcessor, CLIPModel
 from skimage.metrics import structural_similarity as ssim
 import torch
 from datetime import datetime
-from openai import OpenAI
 import os
 from io import BytesIO
 from scipy.spatial.distance import cosine
@@ -20,22 +19,14 @@ from dotenv import load_dotenv
 
 app = FastAPI()
 
-# Define paths
+# Define paths 'your own paths
 PHOTO_DIR = Path("Lego_256x256/photos")
 PHOTO_DIR2= Path("Lego_512x512/photos")
 SKETCH_DIR = Path("Lego_256x256/sketchs")
 PHOTO_DIR.mkdir(parents=True, exist_ok=True)
 SKETCH_DIR.mkdir(parents=True, exist_ok=True)
 MODEL_PATH = Path("models/clip_model")
-inappropriate_labels = [
-    "a violent image", 
-    "a dick",
-    "a flaccid object" 
-    "explicit content", 
-    "offensive symbols",
-    "gore",
-    "hateful imagery"
-]
+
 @app.on_event("startup")
 async def load_clip_model():
     global clip_model, clip_processor
@@ -104,18 +95,7 @@ def get_text_embedding(text):
     return embedding.squeeze().numpy()  # Returns a single 1D NumPy array
 
 
-def detect_inappropriate_content(image: Image.Image):
-    """Checks if an image is similar to any inappropriate category."""
-    image_embedding = get_image_embedding(image)
-    text_embeddings = get_text_embeddings(inappropriate_labels)
-    # Compute cosine similarity with each label
-    scores = [1 - cosine(image_embedding, text_emb) for text_emb in text_embeddings]
 
-    # Get max similarity score
-    max_score = max(scores)
-    best_match = inappropriate_labels[scores.index(max_score)]
-
-    return best_match, max_score
 
 
 
